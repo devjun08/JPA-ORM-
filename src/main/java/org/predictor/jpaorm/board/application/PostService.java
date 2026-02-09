@@ -6,6 +6,7 @@ import org.predictor.jpaorm.board.domain.PostRepository;
 import org.predictor.jpaorm.board.dto.PostCreateRequest;
 import org.predictor.jpaorm.board.dto.PostResponse;
 import org.predictor.jpaorm.board.dto.PostUpdateRequest;
+import org.predictor.jpaorm.hashtag.application.HashtagService;
 import org.predictor.jpaorm.member.domain.Member;
 import org.predictor.jpaorm.member.domain.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -18,19 +19,27 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository; // 작성자 검증을 위해 주입
+    private final HashtagService hashtagService;
 
     // 게시글 생성
     public Long create(PostCreateRequest request) {
-        // 1. 작성자 존재 확인 (유령 회원이 글을 쓸 순 없으니까!)
+        // 1. 작성자 존재 확인 (제미나이 주석 삭제 ㅎㅎ..)
         Member member = memberRepository.findByUsername(request.username())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        // 2. 게시글 생성 (주인님 정보까지 꽉꽉 채워서)
+        // 2. 게시글 생성 (제미나이 주석 삭제 ㅎㅎ..)
         Post post = Post.builder()
                 .title(request.title())
                 .content(request.content())
                 .member(member)
                 .build();
+
+        Post savedPost = postRepository.save(post); // 게시글 저장
+
+        // hashtag 생성
+        if (request.hashtags() != null && !request.hashtags().isEmpty()) {
+            hashtagService.addHashtag(savedPost, request.hashtags());
+        }
 
         // 3. DB 저장 및 생성된 ID 반환
         return postRepository.save(post).getId();
