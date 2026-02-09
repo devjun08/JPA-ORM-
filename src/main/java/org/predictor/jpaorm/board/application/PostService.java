@@ -3,9 +3,8 @@ package org.predictor.jpaorm.board.application;
 import lombok.RequiredArgsConstructor;
 import org.predictor.jpaorm.board.domain.Post;
 import org.predictor.jpaorm.board.domain.PostRepository;
-import org.predictor.jpaorm.board.dto.PostCreateRequest;
+import org.predictor.jpaorm.board.dto.PostRequest;
 import org.predictor.jpaorm.board.dto.PostResponse;
-import org.predictor.jpaorm.board.dto.PostUpdateRequest;
 import org.predictor.jpaorm.hashtag.application.HashtagService;
 import org.predictor.jpaorm.member.domain.Member;
 import org.predictor.jpaorm.member.domain.MemberRepository;
@@ -22,7 +21,7 @@ public class PostService {
     private final HashtagService hashtagService;
 
     // 게시글 생성
-    public Long create(PostCreateRequest request) {
+    public Long create(PostRequest request) {
         // 1. 작성자 존재 확인 (제미나이 주석 삭제 ㅎㅎ..)
         Member member = memberRepository.findByUsername(request.username())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
@@ -46,7 +45,7 @@ public class PostService {
     }
 
     // 게시글 수정
-    public void update(Long id, PostUpdateRequest request) {
+    public void update(Long id, PostRequest request) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
