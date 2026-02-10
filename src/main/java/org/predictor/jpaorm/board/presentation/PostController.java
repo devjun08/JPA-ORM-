@@ -44,7 +44,7 @@ public class PostController {
         return ResponseEntity.ok(postService.getPost(id));
     }
 
-    // 게시글 조회 (다건)
+    // 게시글 검색 (다건) 키워드, 해시태, 정렬, 페이징
     @GetMapping("/search")
     public ResponseEntity<Slice<PostResponse>> searchPosts(
             @RequestParam(required = false) String keyword,
