@@ -10,5 +10,6 @@ public record PostResponse(
         String title,
         String content,
         String writer,
-        LocalDateTime createdAt // 생성시간 추가
+        LocalDateTime createdAt, // 생성시간 추가
+        long likeCount
 ) { }

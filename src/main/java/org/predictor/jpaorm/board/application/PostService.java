@@ -6,8 +6,12 @@ import org.predictor.jpaorm.board.domain.PostRepository;
 import org.predictor.jpaorm.board.dto.PostRequest;
 import org.predictor.jpaorm.board.dto.PostResponse;
 import org.predictor.jpaorm.hashtag.application.HashtagService;
+import org.predictor.jpaorm.hashtag.domain.HashtagType;
+import org.predictor.jpaorm.like.domain.LikeRepository;
 import org.predictor.jpaorm.member.domain.Member;
 import org.predictor.jpaorm.member.domain.MemberRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +23,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository; // 작성자 검증을 위해 주입
     private final HashtagService hashtagService;
+    private final LikeRepository likeRepository;
 
     // 게시글 생성
     public Long create(PostRequest request) {
@@ -83,7 +88,25 @@ public class PostService {
                 post.getTitle(),
                 post.getContent(),
                 post.getMember().getUsername(),
-                post.getCreatedAt()
+                post.getCreatedAt(),
+                likeRepository.countByPost(post) // [수정] 좋아요 수 추가
         );
+    }
+
+    // 게시글 다중 검색 및 페이징 (QueryDSL 활용)
+    @Transactional(readOnly = true)
+    public Slice<PostResponse> searchPosts(String keyword, HashtagType hashtag, Pageable pageable, String sortType) {
+        // 1. 리포지토리의 Custom 메서드 호출
+        Slice<Post> posts = postRepository.searchPosts(keyword, hashtag, pageable, sortType);
+
+        // 2. 엔티티를 DTO(PostResponse)로 변환 (책 13장 권장 사항)
+        return posts.map(post -> new PostResponse(
+                post.getId(),
+                post.getTitle(),
+                post.getContent(),
+                post.getMember().getUsername(),
+                post.getCreatedAt(),
+                likeRepository.countByPost(post) // [수정] 좋아요 수 추가
+        ));
     }
 }

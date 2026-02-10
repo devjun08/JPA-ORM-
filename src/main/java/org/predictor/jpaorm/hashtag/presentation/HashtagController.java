@@ -5,6 +5,7 @@ import org.predictor.jpaorm.board.domain.Post;
 import org.predictor.jpaorm.board.dto.PostResponse;
 import org.predictor.jpaorm.hashtag.application.HashtagService;
 import org.predictor.jpaorm.hashtag.domain.HashtagType;
+import org.predictor.jpaorm.like.domain.LikeRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,7 @@ import java.util.List;
 public class HashtagController {
 
     private final HashtagService hashtagService;
+    private final LikeRepository likeRepository;
 
     /**
      * [과제 요구사항] 해시태그로 게시글 조회 API
@@ -33,7 +35,9 @@ public class HashtagController {
                         post.getTitle(),
                         post.getContent(),
                         post.getMember().getUsername(),
-                        post.getCreatedAt()))
+                        post.getCreatedAt(),
+                        likeRepository.countByPost(post) // [수정] 6번째 인자인 좋아요 수를 추가
+                ))
                 .toList();
 
         return ResponseEntity.ok(responses);
