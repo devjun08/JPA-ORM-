@@ -3,6 +3,9 @@ package org.predictor.jpaorm.global;
 import lombok.RequiredArgsConstructor;
 import org.predictor.jpaorm.board.domain.Post;
 import org.predictor.jpaorm.board.domain.PostRepository;
+import org.predictor.jpaorm.hashtag.domain.Hashtag;
+import org.predictor.jpaorm.hashtag.domain.HashtagRepository;
+import org.predictor.jpaorm.hashtag.domain.HashtagType;
 import org.predictor.jpaorm.member.domain.Member;
 import org.predictor.jpaorm.member.domain.MemberRepository;
 import org.predictor.jpaorm.like.domain.Like;
@@ -18,6 +21,7 @@ public class DataInit {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
+    private final HashtagRepository hashtagRepository;
 
     @Bean
     public CommandLineRunner initData() {
@@ -33,6 +37,11 @@ public class DataInit {
             Post post2 = Post.builder().title("QueryDSL 최고").content("내용2").member(member1).build();
             postRepository.save(post1);
             postRepository.save(post2);
+
+            hashtagRepository.save(Hashtag.builder()
+                    .hashtag(HashtagType.Liverpool) // Enum 상수는 보통 대문자입니다.
+                    .post(post2)
+                    .build());
 
             // 3. 테스트 좋아요 생성
             likeRepository.save(Like.builder().member(member1).post(post1).build());
