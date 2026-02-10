@@ -36,7 +36,7 @@ public class HashtagController {
                         post.getContent(),
                         post.getMember().getUsername(),
                         post.getCreatedAt(),
-                        likeRepository.countByPost(post) // [수정] 6번째 인자인 좋아요 수를 추가!
+                        likeRepository.countByPost(post) // [수정] 6번째 인자인 좋아요 수를 추가
                 ))
                 .toList();
 
