@@ -7,6 +7,7 @@ import org.predictor.jpaorm.board.dto.PostRequest;
 import org.predictor.jpaorm.board.dto.PostResponse;
 import org.predictor.jpaorm.hashtag.application.HashtagService;
 import org.predictor.jpaorm.hashtag.domain.HashtagType;
+import org.predictor.jpaorm.like.domain.LikeRepository;
 import org.predictor.jpaorm.member.domain.Member;
 import org.predictor.jpaorm.member.domain.MemberRepository;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository; // 작성자 검증을 위해 주입
     private final HashtagService hashtagService;
+    private final LikeRepository likeRepository;
 
     // 게시글 생성
     public Long create(PostRequest request) {
@@ -86,7 +88,8 @@ public class PostService {
                 post.getTitle(),
                 post.getContent(),
                 post.getMember().getUsername(),
-                post.getCreatedAt()
+                post.getCreatedAt(),
+                likeRepository.countByPost(post) // [수정] 좋아요 수 추가
         );
     }
 
@@ -102,7 +105,8 @@ public class PostService {
                 post.getTitle(),
                 post.getContent(),
                 post.getMember().getUsername(),
-                post.getCreatedAt()
+                post.getCreatedAt(),
+                likeRepository.countByPost(post) // [수정] 좋아요 수 추가
         ));
     }
 }
