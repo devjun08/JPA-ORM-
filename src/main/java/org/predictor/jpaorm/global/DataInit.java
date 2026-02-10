@@ -39,7 +39,7 @@ public class DataInit {
             postRepository.save(post2);
 
             hashtagRepository.save(Hashtag.builder()
-                    .hashtag(HashtagType.Liverpool) // Enum 상수는 보통 대문자입니다.
+                    .hashtag(HashtagType.LIVERPOOL) // Enum 상수는 보통 대문자입니다.
                     .post(post2)
                     .build());
 
