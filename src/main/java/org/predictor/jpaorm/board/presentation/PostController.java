@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.predictor.jpaorm.board.application.PostService;
 import org.predictor.jpaorm.board.dto.PostRequest;
 import org.predictor.jpaorm.board.dto.PostResponse;
+import org.predictor.jpaorm.hashtag.domain.HashtagType;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,5 +42,17 @@ public class PostController {
     @GetMapping("/{id}") // GET http://localhost:8080/api/posts/1
     public ResponseEntity<PostResponse> getPost(@PathVariable Long id) {
         return ResponseEntity.ok(postService.getPost(id));
+    }
+
+    //
+    @GetMapping("/search")
+    public ResponseEntity<Slice<PostResponse>> searchPosts(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) HashtagType hashtag,
+            @RequestParam(defaultValue = "createdAt") String sortType,
+            Pageable pageable) { // 페이징 정보(size, page)를 자동으로 받습니다.
+
+        Slice<PostResponse> responses = postService.searchPosts(keyword, hashtag, pageable, sortType);
+        return ResponseEntity.ok(responses);
     }
 }

@@ -6,8 +6,11 @@ import org.predictor.jpaorm.board.domain.PostRepository;
 import org.predictor.jpaorm.board.dto.PostRequest;
 import org.predictor.jpaorm.board.dto.PostResponse;
 import org.predictor.jpaorm.hashtag.application.HashtagService;
+import org.predictor.jpaorm.hashtag.domain.HashtagType;
 import org.predictor.jpaorm.member.domain.Member;
 import org.predictor.jpaorm.member.domain.MemberRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,5 +88,21 @@ public class PostService {
                 post.getMember().getUsername(),
                 post.getCreatedAt()
         );
+    }
+
+    // 게시글 다중 검색 및 페이징 (QueryDSL 활용)
+    @Transactional(readOnly = true)
+    public Slice<PostResponse> searchPosts(String keyword, HashtagType hashtag, Pageable pageable, String sortType) {
+        // 1. 리포지토리의 Custom 메서드 호출
+        Slice<Post> posts = postRepository.searchPosts(keyword, hashtag, pageable, sortType);
+
+        // 2. 엔티티를 DTO(PostResponse)로 변환 (책 13장 권장 사항)
+        return posts.map(post -> new PostResponse(
+                post.getId(),
+                post.getTitle(),
+                post.getContent(),
+                post.getMember().getUsername(),
+                post.getCreatedAt()
+        ));
     }
 }
